@@ -1,0 +1,12 @@
+name: SkyGridGenerator
+main: sh.declan.skygridgenerator.SkyGridGenerator
+version: 1.0.2
+api-version: 1.15
+load: STARTUP
+author: spazhead
+commands:
+  skygrid:
+    description: Print plugin information
+    usage: /skygrid
+    permission: skygrid.skygrid
+    permission-message: You cant access SkyGrid
