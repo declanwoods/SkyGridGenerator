@@ -3,6 +3,7 @@ package sh.declan.skygridgenerator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.ChunkGenerator;
 
@@ -17,45 +18,32 @@ public class CustomChunkGenerator extends ChunkGenerator {
     private String id;
     private Logger logger;
 
+    private BlockSet undergroundBlocks = new BlockSet();
+    private BlockSet groundBlocks = new BlockSet();
+    private BlockSet airBlocks = new BlockSet();
+
     CustomChunkGenerator(String inWorldName, String inId, Logger inLogger) {
         id = inId;
         worldName = inWorldName;
         logger = inLogger;
-    }
 
-    private int getRangeWithMax(Random random, int max) {
-        return random.nextInt(max + 1);
-    }
-
-    private Material getUndergroundBlock(Random random) {
-        int choice = getRangeWithMax(random,300);
-
-        HashMap<Integer, Material> blocks = new HashMap<>();
-        blocks.put(10, Material.DIAMOND_ORE);
-        blocks.put(25, Material.GOLD_ORE);
-        blocks.put(100, Material.IRON_ORE);
-        blocks.put(150, Material.CAKE);
-        blocks.put(300, Material.STONE);
-
-        int key = Collections.max(blocks.keySet());
-        for (Integer i : blocks.keySet()) {
-            if (i > choice && i < key) {
-                key = i;
-            }
-        }
-
-        return blocks.get(key);
+        undergroundBlocks.add(Material.STONE, 92);
+        undergroundBlocks.add(Material.COAL_ORE, 5);
+        undergroundBlocks.add(Material.IRON_ORE, 3);
+        undergroundBlocks.add(Material.GOLD_ORE, 0.8);
+        undergroundBlocks.add(Material.DIAMOND_ORE, 0.2);
     }
 
     private Material getRandomBlock(Random random, int y) {
         Material block;
+        double randomDouble = random.nextDouble();
 
         if (y < 64) {
-            block = getUndergroundBlock(random);
+            block = undergroundBlocks.getWith(randomDouble);
         } else if (y < 216) {
-            block = Material.DIRT;
+            block = groundBlocks.getWith(randomDouble);
         } else {
-            block = Material.WHITE_WOOL;
+            block = airBlocks.getWith(randomDouble);
         }
 
         return block;
@@ -71,10 +59,13 @@ public class CustomChunkGenerator extends ChunkGenerator {
         ChunkData chunk = createChunkData(world);
         int div = 4;
 
-        for (int x = 0; x < 16/div; x++) {
-            for (int z = 0; z < 16/div; z++) {
-                for (int y = 0; y < chunk.getMaxHeight()/div; y++) {
-                    chunk.setBlock(x*div, y*div, z*div, getRandomBlock(random, y*div));
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = 0; y < chunk.getMaxHeight(); y++) {
+                    world.setBiome(x, y, z, Biome.PLAINS);
+                    if (x % div == 0 && y % div == 0 && z % div == 0) {
+                        chunk.setBlock(x, y, z, getRandomBlock(random, y));
+                    }
                 }
             }
         }
