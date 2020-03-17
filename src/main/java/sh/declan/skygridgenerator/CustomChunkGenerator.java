@@ -32,6 +32,10 @@ public class CustomChunkGenerator extends ChunkGenerator {
         undergroundBlocks.add(Material.IRON_ORE, 3);
         undergroundBlocks.add(Material.GOLD_ORE, 0.8);
         undergroundBlocks.add(Material.DIAMOND_ORE, 0.2);
+
+        groundBlocks.add(Material.DIRT, 100);
+
+        airBlocks.add(Material.WHITE_WOOL, 100);
     }
 
     private Material getRandomBlock(Random random, int y) {
