@@ -23,12 +23,14 @@ public class BlockSet {
     public Material getWith(double randomDouble) {
         double d = curMax * randomDouble;
 
-        for (int i = 1; i < probabilities.size(); i++) {
-            if (probabilities.get(i-1) < d && probabilities.get(i) > d) {
-                return blocks.get(i-1);
+        int closest = -1;
+
+        for (int i = 0; i < probabilities.size(); i++) {
+            if ((closest == -1 || probabilities.get(i) < probabilities.get(closest)) && probabilities.get(i) > d) {
+                closest = i;
             }
         }
 
-        return blocks.get(blocks.size() - 1);
+        return blocks.get(closest);
     }
 }
